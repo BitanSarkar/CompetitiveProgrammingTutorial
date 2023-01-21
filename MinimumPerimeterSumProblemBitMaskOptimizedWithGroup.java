@@ -74,7 +74,7 @@ public class MinimumPerimeterSumProblemBitMaskOptimizedWithGroup {
                         tempList.add("("+x[i]+","+y[i]+") --- ("+x[j]+","+y[j]+") --- ("+x[k]+","+y[k]+")  =  " + perimeter(x[i], x[j], x[k], y[i], y[j], y[k]));
                         used = used & ~(1<<i) & ~(1<<j) & ~(1<<k);
                         double currentPerimeter = perimeter(x[i], x[j], x[k], y[i], y[j], y[k]) + minPerimeterSum(x, y, usedMap, used, total, tempList);
-                        if(currentPerimeter < minPerimeter) {
+                        if(currentPerimeter < minPerimeter) { // '<' -> minPerimeter, '>' -> maxPerimeter
                             minList.clear();
                             minList.addAll(tempList);
                             minPerimeter = currentPerimeter;
