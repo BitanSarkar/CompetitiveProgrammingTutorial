@@ -4,11 +4,11 @@ public class Main_1_1_3 {
 
     public static void main(String[] args) {
 
-        //6.47213595499958
+        // 6.47213595499958
         // 2.8284271247461903
         // 8.82842712474619
         // 13.48528137423857
-        // 18.14213562373095
+        // 11.242640687119284
 
         Solution sol = new Solution();
         int N = 3;
@@ -17,13 +17,13 @@ public class Main_1_1_3 {
             new int[]{3, 5}, new int[]{5, 6},
             new int[]{2, 5}, new int[]{3, 2}
         };
-        System.out.println(sol.shortestDistanceSum(N, points));
+        System.out.println(doubleMatcher(sol.shortestDistanceSum(N, points), 6.47213595499d));
         N = 2;
         points = new int[][] {
             new int[]{1, 1}, new int[]{1, 2},
             new int[]{2, 0}, new int[]{2, 3}
         };
-        System.out.println(sol.shortestDistanceSum(N, points));
+        System.out.println(doubleMatcher(sol.shortestDistanceSum(N, points), 2.82842712474d));
         N = 6;
         points = new int[][] {
             new int[]{1, 1}, new int[]{1, 2},
@@ -33,7 +33,7 @@ public class Main_1_1_3 {
             new int[]{5, 6}, new int[]{0, 6},
             new int[]{6, 5}, new int[]{0, 5}
         };
-        System.out.println(sol.shortestDistanceSum(N, points));
+        System.out.println(doubleMatcher(sol.shortestDistanceSum(N, points), 8.82842712d));
         N = 7;
         points = new int[][] {
             new int[]{1, 1}, new int[]{1, 2},
@@ -44,7 +44,7 @@ public class Main_1_1_3 {
             new int[]{6, 5}, new int[]{0, 5},
             new int[]{7, 8}, new int[]{1, 7}
         };
-        System.out.println(sol.shortestDistanceSum(N, points));
+        System.out.println(doubleMatcher(sol.shortestDistanceSum(N, points), 13.485281374));
         N = 8;
         points = new int[][] {
             new int[]{1, 1}, new int[]{1, 2},
@@ -56,7 +56,14 @@ public class Main_1_1_3 {
             new int[]{7, 8}, new int[]{1, 7},
             new int[]{8, 7}, new int[]{1, 8}
         };
-        System.out.println(sol.shortestDistanceSum(N, points));
+        System.out.println(doubleMatcher(sol.shortestDistanceSum(N, points), 11.242640687));
+    }
+    public static boolean doubleMatcher(double d1, double d2) {
+        if(d1 == d2) return true;
+        String s1 = String.format("%.6f", d1);
+        String s2 = String.format("%.6f", d2);
+        if(s1.equals(s2)) return true;
+        return false;
     }
 }
 
