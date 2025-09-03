@@ -1,3 +1,4 @@
+package old;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -59,27 +60,31 @@ public class AbridgedProblemBitMaskingOptimizedWithGroup {
         List<String> tempList = new ArrayList<String>();
         List<String> minList = new ArrayList<String>();
         double minDistance = Double.MAX_VALUE;
-        for(int i = 0; i< total; i++) {    
-            for(int j = i+1; j< total; j++) {
-                int ithBit = (used>>i)&1;
-                int jthBit = (used>>j)&1;
-                if(ithBit == 1 && jthBit == 1 && i!=j) {
-                    tempList.add("("+x[i]+","+y[i]+") --- ("+x[j]+","+y[j]+")  =  " + distance(x[i], x[j], y[i], y[j]));
-                    used = used & ~(1<<i) & ~(1<<j);
-                    double currentDistance = distance(x[i], x[j], y[i], y[j]) + minDistanceSum(x, y, usedMap, used, total, tempList);
-                    if(currentDistance < minDistance) {
-                        minList.clear();
-                        minList.addAll(tempList);
-                        minDistance = currentDistance;
-                    }
-                    tempList.clear();
-                    used = used | (1<<i) | (1<<j);
+        int i = firstSetBit(used);
+        for(int j = i+1; j< total; j++) {
+            int ithBit = (used>>i)&1;
+            int jthBit = (used>>j)&1;
+            if(ithBit == 1 && jthBit == 1 && i!=j) {
+                tempList.add("("+x[i]+","+y[i]+") --- ("+x[j]+","+y[j]+")  =  " + distance(x[i], x[j], y[i], y[j]));
+                used = used & ~(1<<i) & ~(1<<j);
+                double currentDistance = distance(x[i], x[j], y[i], y[j]) + minDistanceSum(x, y, usedMap, used, total, tempList);
+                if(currentDistance < minDistance) {
+                    minList.clear();
+                    minList.addAll(tempList);
+                    minDistance = currentDistance;
                 }
+                tempList.clear();
+                used = used | (1<<i) | (1<<j);
             }
         }
         usedMap[key] = new MinListGroup(minDistance, minList);
         list.addAll(minList);
         return minDistance;
+    }
+    
+    private static int firstSetBit(int mask) {
+        // index of least significant set bit
+        return Integer.numberOfTrailingZeros(mask);
     }
 }
 

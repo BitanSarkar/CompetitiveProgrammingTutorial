@@ -1,4 +1,6 @@
+package old;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 public class MinimumPerimeterSumProblemBitMaskOptimizedWithGroup {
@@ -7,20 +9,20 @@ public class MinimumPerimeterSumProblemBitMaskOptimizedWithGroup {
         //Enter number of groups
         int n = sc.nextInt();
         sc.nextLine();
-        double[] x = new double[3*n];
-        double[] y = new double[3*n];
+        int[] x = new int[3*n];
+        int[] y = new int[3*n];
         int used = (1<<(3*n)) - 1;
         MinListGroup[] usedMap = new MinListGroup[used+1];
         //Enter all 3*n points
         for(int i = 0; i<3*n; i++){
             String[] ip = sc.nextLine().split("\\s+");
-            x[i] = Double.parseDouble(ip[0]);
-            y[i] = Double.parseDouble(ip[1]);
+            x[i] = Integer.parseInt(ip[0]);
+            y[i] = Integer.parseInt(ip[1]);
         }
-        List<String> list = new ArrayList<String>();
+        List<int[][]> list = new ArrayList<int[][]>();
         long init = System.currentTimeMillis();
         System.out.println(minPerimeterSum(x, y, usedMap, used, 3*n, list));
-        list.forEach(System.out::println);
+        list.forEach(arr -> System.out.println(Arrays.deepToString(arr)));
         long end = System.currentTimeMillis();
         System.out.println("Execution time : " + (end-init) + "ms");
         sc.close();
@@ -33,7 +35,7 @@ public class MinimumPerimeterSumProblemBitMaskOptimizedWithGroup {
                 Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
     }
 
-    private static double minPerimeterSum(double[] x, double[] y, MinListGroup[] usedMap, int used, int total, List<String> list) {
+    private static double minPerimeterSum(int[] x, int[] y, MinListGroup[] usedMap, int used, int total, List<int[][]> list) {
         if(x==null || y==null) return Double.MAX_VALUE;
         int usedCtr = Integer.bitCount(used);
         int idx1 = 0;
@@ -53,7 +55,7 @@ public class MinimumPerimeterSumProblemBitMaskOptimizedWithGroup {
         }
         if(usedCtr<=2) return Double.MAX_VALUE;
         if(usedCtr==3) {
-            list.add("("+x[idx1]+","+y[idx1]+") --- ("+x[idx2]+","+y[idx2]+") --- ("+x[idx3]+","+y[idx3]+")  =  " + perimeter(x[idx1], x[idx2], x[idx3], y[idx1], y[idx2], y[idx3]));
+            list.add(new int[][]{new int[]{(int)x[idx1], (int)y[idx1]}, new int[]{(int)x[idx2], (int)y[idx2]}, new int[]{(int)x[idx3], (int)y[idx3]}});
             return perimeter(x[idx1], x[idx2], x[idx3], y[idx1], y[idx2], y[idx3]);
         }
         Integer key = used;
@@ -61,8 +63,8 @@ public class MinimumPerimeterSumProblemBitMaskOptimizedWithGroup {
             list.addAll(usedMap[key].group);
             return usedMap[key].perimeter;
         }
-        List<String> tempList = new ArrayList<String>();
-        List<String> minList = new ArrayList<String>();
+        List<int[][]> tempList = new ArrayList<int[][]>();
+        List<int[][]> minList = new ArrayList<int[][]>();
         double minPerimeter = Double.MAX_VALUE;
         for(int i = 0; i<total; i++) {    
             for(int j = i+1; j<total; j++) {
@@ -70,8 +72,8 @@ public class MinimumPerimeterSumProblemBitMaskOptimizedWithGroup {
                     int ithBit = (used>>i)&1;
                     int jthBit = (used>>j)&1;
                     int kthBit = (used>>k)&1;
-                    if(ithBit == 1 && jthBit == 1 && kthBit == 1 && i!=j && k!=j && k!=i){
-                        tempList.add("("+x[i]+","+y[i]+") --- ("+x[j]+","+y[j]+") --- ("+x[k]+","+y[k]+")  =  " + perimeter(x[i], x[j], x[k], y[i], y[j], y[k]));
+                    if(!isCollinear(x[i], y[i], x[j], y[j], x[k], y[k]) && ithBit == 1 && jthBit == 1 && kthBit == 1 && i!=j && k!=j && k!=i){
+                        tempList.add(new int[][]{new int[]{(int)x[i], (int)y[i]}, new int[]{(int)x[j], (int)y[j]}, new int[]{(int)x[k], (int)y[k]}});
                         used = used & ~(1<<i) & ~(1<<j) & ~(1<<k);
                         double currentPerimeter = perimeter(x[i], x[j], x[k], y[i], y[j], y[k]) + minPerimeterSum(x, y, usedMap, used, total, tempList);
                         if(currentPerimeter < minPerimeter) { // '<' -> minPerimeter, '>' -> maxPerimeter
@@ -89,14 +91,19 @@ public class MinimumPerimeterSumProblemBitMaskOptimizedWithGroup {
         list.addAll(minList);
         return minPerimeter;
     }
+
+    public static boolean isCollinear(int x1, int y1, int x2, int y2, int x3, int y3) {
+        long val = (long)(x2 - x1) * (y3 - y1) - (long)(y2 - y1) * (x3 - x1);
+        return val == 0;
+    }
 }
 
 class MinListGroup {
     double perimeter;
-    List<String> group;
+    List<int[][]> group;
     MinListGroup(
         double perimeter,
-        List<String> group){
+        List<int[][]> group){
             this.group=group;
             this.perimeter=perimeter;
     }

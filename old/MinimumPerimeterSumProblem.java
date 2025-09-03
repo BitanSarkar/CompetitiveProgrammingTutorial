@@ -1,8 +1,11 @@
+package old;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-public class MinimumPerimeterSumProblemOptimized {
+public class MinimumPerimeterSumProblem {
     public static void main(String[] args){
         Scanner sc = new Scanner(System.in);
         //Enter number of groups
@@ -15,17 +18,20 @@ public class MinimumPerimeterSumProblemOptimized {
             points[i] = new Point(Double.parseDouble(ip[0]), Double.parseDouble(ip[1]));
         }
         long init = System.currentTimeMillis();
-        Map<String, Double> map = new HashMap<String, Double>();
-        System.out.println(minPerimeterSum(points, map));
+        List<Triplet> list = new ArrayList<Triplet>();
+        Map<String, MinListGroup> map = new HashMap<String, MinListGroup>();
+        System.out.println(minPerimeterSum(points, list, map));
+        list.forEach(pair -> System.out.println(pair.toString()));
         long end = System.currentTimeMillis();
         System.out.println("Execution time : " + (end-init) + "ms");
         sc.close();
     }
 
-    private static double minPerimeterSum(Point[] points, Map<String, Double> map) {
+    private static double minPerimeterSum(Point[] points, List<Triplet> list, Map<String, MinListGroup> map) {
         if(points==null) return Double.MAX_VALUE;
         if(points.length<=2) return Double.MAX_VALUE;
         if(points.length==3) {
+            list.add(new Triplet(points[0], points[1], points[2]));
             return (new Triplet(points[0], points[1], points[2])).perimeter();
         }
         Arrays.sort(points);
@@ -33,13 +39,19 @@ public class MinimumPerimeterSumProblemOptimized {
         for(int i = 0; i<points.length; i++){
             key = key + points[i].toString();
         }
-        if(map.containsKey(key)) return map.get(key);
+        if(map.containsKey(key)){
+            list.addAll(map.get(key).group);
+            return map.get(key).perimeter;
+        }
+        List<Triplet> tempList = new ArrayList<Triplet>();
+        List<Triplet> minList = new ArrayList<Triplet>();
         double minPerimeter = Double.MAX_VALUE;
         for(int i = 0; i<points.length; i++) {    
             for(int j = i+1; j<points.length; j++) {
                 for(int k = j+1; k<points.length; k++) {
                     Point[] remPoints = new Point[points.length-3];
                     Triplet currentTriplet = new Triplet(points[i], points[j], points[k]);
+                    tempList.add(currentTriplet);
                     int ctr = 0;
                     for(int rem = 0; rem<points.length; rem++) {
                         if(rem!=i&&rem!=j&&rem!=k) {
@@ -47,11 +59,18 @@ public class MinimumPerimeterSumProblemOptimized {
                             ctr++;
                         }
                     }
-                    minPerimeter = Math.min(currentTriplet.perimeter() + minPerimeterSum(remPoints, map),minPerimeter);
+                    double currentPerimeter = currentTriplet.perimeter() + minPerimeterSum(remPoints, tempList, map);
+                    if(currentPerimeter<=minPerimeter){
+                        minList.clear();
+                        minList.addAll(tempList);
+                        minPerimeter = currentPerimeter;
+                    }
+                    tempList.clear();
                 }
             }
         }
-        map.put(key, minPerimeter);
+        map.put(key, new MinListGroup(minPerimeter, minList));
+        list.addAll(minList);
         return minPerimeter;
     }
 }
@@ -93,4 +112,13 @@ class Triplet {
         return "("+this.A.x+","+this.A.y+") --- ("+this.B.x+","+this.B.y+") --- ("+this.C.x+","+this.C.y+")  =  " + perimeter();
     }
 }
-
+class MinListGroup {
+    double perimeter;
+    List<Triplet> group;
+    MinListGroup(
+        double perimeter,
+        List<Triplet> group){
+            this.group=group;
+            this.perimeter=perimeter;
+    }
+}
