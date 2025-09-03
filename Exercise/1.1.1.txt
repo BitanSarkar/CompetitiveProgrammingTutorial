@@ -1,0 +1,6 @@
+Greedy solution will fail for
+
+(1, 1), (1, 2), (2,0), (2, 3)
+
+Greedy solution will match shortest dist first, so 1 + 3 = 4
+Backtracking solution will give, 1.414 + 1.414 = 2.828 (lower)
